@@ -2,6 +2,13 @@
 import dxpy
 import subprocess
 
+import glob
+import os
+import pandas as pd
+#from distutils.version import LooseVersion
+from looseversion import LooseVersion
+
+
 # Get project ID
 project_id = dxpy.find_one_project()["id"]
 
@@ -14,9 +21,6 @@ cmd = ["dx", "extract_dataset", dataset, "-ddd", "--delimiter", ","]
 subprocess.check_call(cmd)
 
 
-import glob
-import os
-import pandas as pd
 
 path = os.getcwd()
 data_dict_csv = glob.glob(os.path.join(path, "*.data_dictionary.csv"))[0]
@@ -24,17 +28,12 @@ data_dict_df = pd.read_csv(data_dict_csv)
 data_dict_df.head()
 
 
-import glob
-import os
-import pandas as pd
-
 path = os.getcwd()
 data_dict_csv = glob.glob(os.path.join(path, "*.data_dictionary.csv"))[0]
 data_dict_df = pd.read_csv(data_dict_csv)
 data_dict_df.head()
 
-#from distutils.version import LooseVersion
-from packaging.version import parse as LooseVersion
+
 
 def field_names_for_ids(field_id):
     field_names = ["eid"]
