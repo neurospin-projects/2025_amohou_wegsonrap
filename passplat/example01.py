@@ -127,11 +127,11 @@ pdf['mother_age'] = pdf.filter(regex=(r'(p3526_*|p1845_*)')).max(axis=1)
 # else assign parent's AD risk with their risk, which is their age (proportional to diff of age of 100) with minimum risk at 0.32 
 
 def parents_ad_risk(row): 
-import numpy as np 
+    import numpy as np 
 
-father_ad_risk = 1 if 10 in row['illnesses_of_father'] else np.maximum(0.32, (100 - row['father_age'])/100)
-mother_ad_risk = 1 if 10 in row['illnesses_of_mother'] else np.maximum(0.32, (100 - row['mother_age'])/100)
-return father_ad_risk + mother_ad_risk 
+    father_ad_risk = 1 if 10 in row['illnesses_of_father'] else np.maximum(0.32, (100 - row['father_age'])/100)
+    mother_ad_risk = 1 if 10 in row['illnesses_of_mother'] else np.maximum(0.32, (100 - row['mother_age'])/100)
+    return father_ad_risk + mother_ad_risk 
 
 pdf['parents_ad_risk'] = pdf.apply(parents_ad_risk, axis=1) 
 pdf['ad_risk_by_proxy'] = pdf[['has_ad_icd10','parents_ad_risk']].max(axis=1) 
