@@ -69,7 +69,89 @@ pdf = temp_df.toPandas()
 print(pdf.head())
 
 
+print(">> Fin traitement jeudi")
 import re
 pdf = pdf.rename(columns=lambda x: re.sub('participant.','',x))
 
-# COmmentaiure
+
+codings_csv = glob.glob(os.path.join(path, "*.codings.csv"))[0]
+codings_df = pd.read_csv(codings_csv)
+codings_df.head()
+
+# Collapse ICD-10 codes for Alzheimer's disease (G30* and F00*)
+ad_icd_codes = list(
+    codings_df[(codings_df["coding_name"] == "data_coding_19") & ((codings_df["parent_code"] == "G30") | (codings_df["parent_code"] == "F00"))]["code"])
+ad_icd_codes
+
+print(">> Block 1")
+import ast
+import numpy as np
+
+# Replace NaN with string None for p41270
+
+# Note: eval will return Nonetype for string "None"
+pdf["p41270"] = pdf["p41270"].replace(np.nan, "None")
+
+
+# Get each participant's hospital inpatient records in ICD10 Diagnoses
+def icd10_codes(row):
+    icd10_codes = row['p41270'] or []
+    return list( set(icd10_codes) )
+
+pdf['icd10_codes'] = pdf.apply(icd10_codes, axis=1)
+
+# If the participant has any of the ICD-10 codes for AD, record the risk to "2" 
+def has_ad_icd10(row): 
+    return 0 if set(row['icd10_codes']).isdisjoint(ad_icd_codes) else 2 
+pdf['has_ad_icd10'] = pdf.apply(has_ad_icd10, axis=1) 
+
+pdf['illnesses_of_father'] = pdf.filter(regex=('p20107*')).apply(
+    lambda x: list(set(eval(x.any() or "[]"))),  
+    axis=1)
+
+pdf['illnesses_of_mother'] = pdf.filter(regex=('p20110*')).apply(
+    lambda x: list(set(eval(x.any() or "[]"))), 
+    axis=1)
+
+
+
+print(">> Block 2 ICD")
+
+
+# Get the max age between age at death and recorded age
+
+pdf['father_age'] = pdf.filter(regex=(r'(p1807_*|p2946_*)')).max(axis=1)
+pdf['mother_age'] = pdf.filter(regex=(r'(p3526_*|p1845_*)')).max(axis=1)
+
+# If the parent has diagnosed with AD (code 10), record it as 1; 
+# else assign parent's AD risk with their risk, which is their age (proportional to diff of age of 100) with minimum risk at 0.32 
+
+def parents_ad_risk(row): 
+import numpy as np 
+
+father_ad_risk = 1 if 10 in row['illnesses_of_father'] else np.maximum(0.32, (100 - row['father_age'])/100)
+mother_ad_risk = 1 if 10 in row['illnesses_of_mother'] else np.maximum(0.32, (100 - row['mother_age'])/100)
+return father_ad_risk + mother_ad_risk 
+
+pdf['parents_ad_risk'] = pdf.apply(parents_ad_risk, axis=1) 
+pdf['ad_risk_by_proxy'] = pdf[['has_ad_icd10','parents_ad_risk']].max(axis=1) 
+pdf[['ad_risk_by_proxy','parents_ad_risk','has_ad_icd10']].head() 
+
+
+print(">> Block 3 SCan Parents")
+
+
+pdf_qced = pdf[
+           (pdf['p31'] == pdf['p22001']) & # Filter in sex and genetic sex are the same
+           (pdf['p22006']==1) &            # in_white_british_ancestry_subset
+           (pdf['p22019'].isnull()) &      # Not Sex chromosome aneuploidy
+           (pdf['p22021']!=10) &           # Not Ten or more third-degree relatives identified (not 'excess_relatives')
+           (pdf['p22027'].isnull()) &      # Not het_missing_outliers
+           ((pdf['father_age'].notnull()) & (pdf['father_age']>0)) &  # There is father's age
+           ((pdf['mother_age'].notnull()) & (pdf['mother_age']>0)) &  # There is mother's age
+           (pdf['illnesses_of_father'].apply(lambda x:(-11 not in x and -13 not in x))) &  # Filter out "do not know" or "prefer not to answer" father illness
+           (pdf['illnesses_of_mother'].apply(lambda x:(-11 not in x and -13 not in x)))    # Filter out "do not know" or "prefer not to answer" mother illness
+]
+
+
+print(">> Block 3 Fin traitements")
