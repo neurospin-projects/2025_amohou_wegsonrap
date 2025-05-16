@@ -67,3 +67,7 @@ temp_df = spark.sql(retrieve_sql.strip(";"))
 pdf = temp_df.toPandas()
 
 print(pdf.head())
+
+
+import re
+pdf = pdf.rename(columns=lambda x: re.sub('participant.','',x))
