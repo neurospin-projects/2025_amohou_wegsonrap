@@ -42,15 +42,31 @@ field_ids = ['31', '21022', '22001', '22006', '22009', '22019', '22021', '22027'
              '20110', '3526', '1845']
 field_names = field_names_for_ids(field_ids)
 
+STOP
 
 print('Step 5: Extract the Relevant Data Fields')
 # Extract the specified fields
 cmd = ["dx", "extract_dataset", dataset, "--fields", field_names, "--delimiter", ",", "--output", "extracted_data.sql", "--sql"]
 subprocess.check_call(cmd)
 
-STOP
+import pyspark
 
-cmd = ["dx", "extract_dataset", dataset, "--fields", field_names, "--delimiter", ",", "--output", "extracted_data.csv"]
+sc = pyspark.SparkContext()
+spark = pyspark.sql.SparkSession(sc)
+
+with open("extracted_data.sql", "r") as file:
+    retrieve_sql=""
+    for line in file:
+        retrieve_sql += line.strip()
+
+temp_df = spark.sql(retrieve_sql.strip(";"))
+pdf = temp_df.toPandas()
+
+print(pdf.head())
+
+
+
+cmd = ["dx", "extract_dataset", dataset, "--fields", field_names, "--delimiter", ",", "--output", "extracted_data.csv", "--csv"] 
 subprocess.check_call(cmd)
 
 # Load the extracted data into a DataFrame
