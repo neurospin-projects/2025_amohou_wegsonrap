@@ -59,7 +59,7 @@ pdf = pd.read_csv("extracted_data.csv")
 # Remove the 'participant.' prefix from column names
 pdf.columns = pdf.columns.str.replace('participant.', '', regex=False)
 
-print('Step 6: Identify Alzheimer's Disease ICD-10 Codes')
+print('Step 6: Identify Alzheimers Disease ICD-10 Codes')
 # Load the codings CSV
 codings_csv = glob.glob(os.path.join(path, "*.codings.csv"))[0]
 codings_df = pd.read_csv(codings_csv)
