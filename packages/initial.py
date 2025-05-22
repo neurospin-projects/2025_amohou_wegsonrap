@@ -11,7 +11,7 @@ project_id = dxpy.find_one_project()["id"]
 
 print('Step 2: Access and Extract the Dataset')
 # Discover the dispensed dataset ID
-dispensed_dataset_id = dxpy.find_one_data_object(typename='Dataset', name='app*.dataset', folder='/', name_mode='glob', project=projec_id)['id']
+dispensed_dataset_id = dxpy.find_one_data_object(typename='Dataset', name='app*.dataset', folder='/', name_mode='glob', project=project_id)['id']
 dataset = f"{project_id}:{dispensed_dataset_id}"
 
 # Extract the dataset
