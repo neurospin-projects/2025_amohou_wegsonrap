@@ -6,13 +6,14 @@ import pandas as pd
 import numpy as np
 import re
 
-print('Step 2: Access and Extract the Dataset')
-# Discover the dispensed dataset ID
-dispensed_dataset_id = dxpy.find_one_data_object(typename='Dataset', name='app*.dataset', folder='/', name_mode='glob')['id']
-
 # Get the current project ID
 project_id = dxpy.find_one_project()["id"]
 dataset = f"{project_id}:{dispensed_dataset_id}"
+
+print('Step 2: Access and Extract the Dataset')
+# Discover the dispensed dataset ID
+dispensed_dataset_id = dxpy.find_one_data_object(typename='Dataset', name='app*.dataset', folder='/', name_mode='glob', project=projec_id)['id']
+
 
 # Extract the dataset
 cmd = ["dx", "extract_dataset", dataset, "-ddd", "--delimiter", ","]
