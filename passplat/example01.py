@@ -14,7 +14,10 @@ project_id = dxpy.find_one_project()["id"]
 
 # Automatically discover dispensed dataset ID and load the dataset 
 dispensed_dataset_id = dxpy.find_one_data_object(typename='Dataset', name='app*.dataset', folder='/', name_mode='glob', project=project_id)['id']
+<<<<<<< HEAD
 
+=======
+>>>>>>> UPD : ajout de fichiers
 dataset = (':').join([project_id, dispensed_dataset_id])
 
 cmd = ["dx", "extract_dataset", dataset, "-ddd", "--delimiter", ","]
