@@ -1,0 +1,24 @@
+### Etapes pour faire l'exécution du workflow et le lancer
+
+# On télécharge le workflow(fichier wdl) depuis le git se trouvant à cette adresse : https://github.com/dnanexus-rnd/liftover_plink_beds.git
+
+# Ensuite, on peut éditer le workflow et lancer la commande qui suit pour avoir son identifiant sous le format workflow-yyyy :
+
+ java -jar dxCompiler-2.13.0.jar compile liftover_plink_beds.wdl --project project-Gxv2Xz0J01k1gpZV8FgPF6p
+
+# Il faut veiller à se placer dans le dossier contenant dxCompiler-2.13.0.jar(téléchargeable à ce lien https://github.com/dnanexus/dxCompiler/blob/develop/RELEASE_NOTES.md) pour lancer la compilation
+
+# Il faut bien veiller à installer les outils de dx toolkit avec cette commande : 
+
+export ROOTDIR=/neurospin/brainomics/25_UM_Rap_Transition
+pixi shell --manifest-path $ROOTDIR/envs/dxtoolkit/pixi.toml
+
+# Il faut rajouter -f à la fin de la commande pour écraser les compilations qui existeraient déjà
+
+# Ensuite il faut télécharger le fichier json du git du liftover et l'éditer avec les identifiants sur dnanexus des fichiers à utiliser en les renseignant dans les bonnes catégories sous le format file-J0j3VPQJ01k7PxZXV6GBqP4x"
+
+# Maintenant on peut lancer le workflow avec cette commande en veillant à bien se placer dans le dossier contenant le fichier json :
+dx run workflow-yyyy -f input.json --brief -y --destination /commons/references/liftover_results/
+
+# On récupère un identifiant d'analyse sous le format analysis-zzzz
+
