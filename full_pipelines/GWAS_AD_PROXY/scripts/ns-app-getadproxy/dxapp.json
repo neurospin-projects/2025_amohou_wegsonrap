@@ -1,0 +1,68 @@
+{
+  "name": "ns-app-getadproxy",
+  "title": "A proxy for AD diagnotic in AD",
+  "summary": "A proxy for AD diagnotic in AD. It happens to be not very good.",
+  "details": {
+    "contactEmail": "vincent.frouin@cea.fr"
+  },
+  "version": "0.0.1",
+  "inputSpec": [
+    {
+      "name": "tabexport_with_icd",
+      "label": "tabexport_with_icd",
+      "class": "file",
+      "optional": false,
+      "patterns": [
+        "*"
+      ],
+      "help": ""
+    }
+  ],
+  "outputSpec": [
+    {
+      "name": "output_pheno_file",
+      "label": "output_pheno_file",
+      "class": "file",
+      "patterns": [
+        "*"
+      ],
+      "help": ""
+    }
+  ],
+  "runSpec": {
+    "execDepends": [
+      {"name": "pandas",
+       "package_manager": "pip"},
+       {"name": "matplotlib",
+        "package_manager": "pip"},
+        {"name": "pandas-stubs",
+         "package_manager": "pip"}
+
+    ],
+    "timeoutPolicy": {
+      "*": {
+        "hours": 5
+      }
+    },
+    "interpreter": "python3",
+    "file": "src/ns-app-getadproxy.py",
+    "distribution": "Ubuntu",
+    "release": "24.04",
+    "version": "0"
+  },
+  "access": {
+    "network": [
+      "*"
+    ],
+    "project": "CONTRIBUTE"
+  },
+  "regionalOptions": {
+    "aws:eu-west-2": {
+      "systemRequirements": {
+        "*": {
+          "instanceType": "mem1_ssd1_v2_x16"
+        }
+      }
+    }
+  }
+}

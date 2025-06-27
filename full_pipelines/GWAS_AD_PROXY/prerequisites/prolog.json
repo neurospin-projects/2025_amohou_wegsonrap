@@ -1,0 +1,23 @@
+{
+    "name": "ns-app-prolog", 
+    "title": "Prolog for AD by proxy computing",  
+    "summary": "Prolog for AD by proxy computing",
+    "details": {        
+              "contactEmail": "vincent.frouin@cea.fr" 
+                },   
+    "version": "0.0.1", 
+    "inputSpec": [
+      {
+        "name": "outprefix",
+        "class": "string",
+        "optional": false,
+        "help": ""
+      }
+    ],
+    "outputSpec": [
+      {
+        "name": "outputfile",
+        "class": "file"
+      }
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "name": "ns-app-getadproxy", 
+    "title": "A proxy for AD diagnotic in AD",  
+    "summary": "A proxy for AD diagnotic in AD. It happens to be not very good.",
+    "details": {        
+              "contactEmail": "vincent.frouin@cea.fr" 
+                },   
+    "version": "0.0.1", 
+    "inputSpec": [
+      {
+        "name": "tabexport_with_icd",
+        "label": "tabexport_with_icd",
+        "class": "file",
+        "optional": false,
+        "patterns": [
+          "*"
+        ],
+        "help": ""
+      }
+    ],
+    "outputSpec": [
+      {
+        "name": "output_pheno_file",
+        "label": "output_pheno_file",
+        "class": "file",
+        "patterns": [
+          "*"
+        ],
+        "help": ""
+      }
+    ]
+}
+
+
