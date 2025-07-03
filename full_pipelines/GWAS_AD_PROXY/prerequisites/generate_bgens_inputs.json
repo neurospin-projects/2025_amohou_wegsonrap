@@ -1,0 +1,20 @@
+{
+    "name": "ns-app-generate_bgens_inputs", 
+    "title": "Generating the inputs to launch the workflow for the QC of WES data",  
+    "summary": "This app allows the user to generate the inputs for the quality control of WES data.",
+    "details": {        
+              "contactEmail": "urielle.mohou@cea.fr" 
+                },   
+    "version": "0.0.1", 
+
+    "outputSpec": [
+      {
+        "name": "outputfile",
+        "class": "file",
+        "patterns": [
+          "*"
+        ],
+        "help": ""
+      }
+    ]
+}

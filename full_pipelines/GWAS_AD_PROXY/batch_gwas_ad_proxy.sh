@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script colleting all "dx run" commands to be run from a dx-toolkit local shell.
+# Script collecting all "dx run" commands to be run from a dx-toolkit local shell.
 
 # Step1
 #######
@@ -23,5 +23,32 @@ dx run table-exporter \
     appret=$(echo $ret | grep -o 'applet-[a-zA-Z0-9]\+' | grep -v 'applet-id')
 dx run --priority high $appret -itabexport_with_icd=/tmp/raw_extract.csv -y --watch
 
-# Step2
+# Step2 
+#######
+
+#To perform the liftover on bed, bim, fam files from Genotype calls folder. The input.json file is generated via the sh file generate_input_json that can be find in the folder /prerequisites/
+
+    ret=$(java -jar ~/bin/dxCompiler.jar compile $ROOT_INSTALL/prerequisites/liftover_plink_beds.wdl --project project-Gxv2Xz0J01k1gpZV8FgPF6pq --destination /tmp/)
+    appret=$(echo $ret | grep -o 'workflow-[a-zA-Z0-9]\+' | grep -v 'workflow-id')
+
+dx run --priority high $appret -f $ROOT_INSTALL/prerequisites/input.json --brief -y --watch --destination /tmp/ 
+
+# Step3 
+#######
+
+#To perform the quality control step on both array genotype data and WES data
+# For array genotype data
+dx run app-swiss-army-knife  \
+    -iin="/tmp/ukb_c1-22_hg38_merged.bim" \
+    -iin="/tmp/ukb_c1-22_hg38_merged.bed" \
+    -iin="/tmp/ukb_c1-22_hg38_merged.fam" \
+    -icmd="plink2 --bfile ukb_c1-22_hg38_merged --out final_array_snps_CRCh38_qc_pass --mac 100 --maf 0.01 --hwe 1e-15 --mind 0.1 --geno 0.1 --write-snplist --write-samples --no-id-header --threads $(nproc)" \
+    --destination /tmp/ --priority high -y --watch
+
+
+# For WES data
+java -jar ~/bin/dxCompiler.jar compile $ROOT_INSTALL/prerequisites/bgens_qc.wdl -project project-Gxv2Xz0J01k1gpZV8FgPF6pq -inputs $ROOT_INSTALL/prerequisites/bgens_qc_input.json -archive -folder '/tmp/'
+dx run /tmp/bgens_qc -f $ROOT_INSTALL/prerequisites/bgens_qc_input.json --destination /tmp/
+
+# Step4 
 #######

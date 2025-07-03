@@ -7,7 +7,7 @@ The refence for this works is: [gwas_on_adbyproxy](https://dnanexus.gitbook.io/u
 1. A notebook  (using jupyter-sparkl kernel) that would interact with RAP-central to 
    1. get information from the sql (tabular) data and 
    2. the s3 data-dictionary file
-2. A WDL Workflow data language script that implement the lifover
+2. A WDL Workflow data language script that implement the liftover
 3. A SwissArmyKnife list of commands to perform QC
 4. A dx run call to the Regenie App (available from RAP-Central)
 
@@ -19,10 +19,7 @@ The objective is to wrap-up in a single script those 4 steps
 See [howto build an app](https://academy.dnanexus.com/buildingapplets/python/python_wc) from dnanexus documentation.
 
 
-
-
 ### ns-app-prolog
-
 
 <details><summary>Expand for details: ns-app-prolog</summary>
 
@@ -31,7 +28,7 @@ This app will manage the query of the data-dictionary file available from RAP-ce
 
 Set a ROOT_INSTALL variable
 ```
-ROOT_INSTALL=/neurospin/tmp/vfrouin/proj_rap/GWAS_AD_PROXY
+ROOT_INSTALL=/neurospin/brainomics/25_UM_Rap_Transition/gits/2025_amohou_wegsonrap/full_pipelines/GWAS_AD_PROXY
 ```
 
 Create the template for the app.
@@ -39,7 +36,7 @@ Create the template for the app.
 ```bash
 cd $ROOT_INSTALL/scripts
 dx-app-wizard --json-file $ROOT_INSTALL/prerequisites/prolog.json
-# anser are the defaults value, 
+# answer are the defaults value, 
 # but Python for language, 
 # 20m for timeout,
 # and mem1_ssd1_v2_x16 for instance_type
@@ -195,7 +192,7 @@ This app will interpret the result of a table-export csv file ouput. This app wi
 
 Set a ROOT_INSTALL variable
 ```
-ROOT_INSTALL=/neurospin/tmp/vfrouin/proj_rap/GWAS_AD_PROXY
+ROOT_INSTALL=/neurospin/brainomics/25_UM_Rap_Transition/gits/2025_amohou_wegsonrap/full_pipelines/GWAS_AD_PROXY
 ```
 
 Create the template for the app.
@@ -238,6 +235,103 @@ And fix the regionalOptions with
       }
     }
   }
+```
+
+
+</details>
+
+## Build an App to replace the second part of Step3
+
+### ns-app-generate_bgens_inputs
+
+<details><summary>Expand for details: ns-app-generate_bgens_inputs</summary>
+
+This app allows the user to generate the inputs for the quality control of WES data.
+
+Set a ROOT_INSTALL variable
+```
+ROOT_INSTALL=/neurospin/brainomics/25_UM_Rap_Transition/gits/2025_amohou_wegsonrap/full_pipelines/GWAS_AD_PROXY
+```
+
+Create the template for the app.
+
+```bash
+cd $ROOT_INSTALL/scripts
+dx-app-wizard --json-file $ROOT_INSTALL/prerequisites/generate_bgens_inputs.json
+# answer are the defaults value, 
+# but Python for language, 
+# 20m for timeout,
+# and mem1_ssd1_v2_x16 for instance_type
+tree ns-app-prolog
+# should display
+ns-app-prolog/
+├── dxapp.json
+├── Readme.developer.md
+├── Readme.md
+├── resources
+├── src
+│   └── ns-app-prolog.py
+└── test
+    └── test.py
+```
+
+Then edit the dxap.json and add in the runSpecs part.
+```json
+    "execDepends": [
+      {"name": "pandas",
+       "package_manager": "pip"}
+    ],
+```
+And fix the regionalOptions with
+```json
+  "regionalOptions": {
+    "aws:eu-west-2": {
+      "systemRequirements": {
+        "*": {
+          "instanceType": "mem1_ssd1_v2_x16"
+        }
+      }
+    }
+  }
+```
+or this ?
+```json
+    "execDepends": [
+      {"name": "pandas",
+       "package_manager": "pip"},
+       {"name": "matplotlib",
+        "package_manager": "pip"},
+        {"name": "pandas-stubs",
+         "package_manager": "pip"}
+
+    ],
+    "timeoutPolicy": {
+      "*": {
+        "hours": 5
+      }
+    },
+    "interpreter": "python3",
+    "file": "src/ns-app-getadproxy.py",
+    "distribution": "Ubuntu",
+    "release": "24.04",
+    "version": "0"
+  ,
+  "access": {
+    "network": [
+      "*"
+    ],
+    "project": "CONTRIBUTE"
+  },
+  "regionalOptions": {
+    "aws:eu-west-2": {
+      "systemRequirements": {
+        "*": {
+          "instanceType": "mem1_ssd1_v2_x16"
+        }
+      }
+    }
+  }
+
 ```
 
 

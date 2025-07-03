@@ -11,7 +11,7 @@ for arg in "$@"; do
 done
 
 # Name of the app
-bund="ns-app-getadproxy"
+bund="/neurospin/brainomics/25_UM_Rap_Transition/gits/2025_amohou_wegsonrap/full_pipelines/GWAS_AD_PROXY/scripts/ns-app-getadproxy"
 
 # option -f force the deletion of any existing app with the same name
 retval=`dx build -f $bund --destination /commons/ns-apps`
