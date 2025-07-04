@@ -65,7 +65,7 @@ bgens = sort(cmd)
 
 #Tri des fichiers sample
 cmd = ['dx', 'find', 'data', '--name', '*.sample', '--path', path_to_data, '--brief',]
-samples =sort(cmd)
+samples = sort(cmd)
 
 cmd = ['dx', 'find', 'data', '--name', phenotype_file, '--path', phenotype_folder, '--brief',]
 pheno_file = [f'dx://{item.decode("utf-8")}' for item in subprocess.check_output(cmd).splitlines()][0]
