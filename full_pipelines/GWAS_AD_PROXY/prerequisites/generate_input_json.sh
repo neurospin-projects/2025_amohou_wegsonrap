@@ -10,7 +10,7 @@ output_file="./input.json"
 echo "Generating $output_file in current directory: $(pwd)"
 
 dx upload hg38.fa --destination /tmp/
-dx upload b37ToHg38.over.chain--destination /tmp/
+dx upload b37ToHg38.over.chain --destination /tmp/
 
 #  Liste des fichiers avec leur clé JSON et chemin DNAnexus 
 declare -A single_files=(
